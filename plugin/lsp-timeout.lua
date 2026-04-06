@@ -98,8 +98,12 @@ autocmd({ "FocusGained" }, {
 				_G.lspTimeOutState.stopTimer = nil
 			end
 
-			local configDefault = require("lsp-timeout.config").default
-			local config = configDefault:extend(
+			local ok, configModule = pcall(require, "lsp-timeout.config")
+			if not ok or not configModule or not configModule.default then
+				vim.notify("lsp-timeout: Could not load config default!", vim.log.levels.ERROR)
+				return
+			end
+			local config = configModule.default:extend(
 				vim.b[auEvent.buf].lspTimeoutConfig or vim.g["lsp-timeout-config"] or vim.g.lspTimeoutConfig or {}
 			)
 			if vim.tbl_contains(config.filetypes.ignore, vim.bo[auEvent.buf].filetype) then
@@ -199,7 +203,10 @@ autocmd({ "FocusGained" }, {
 
 			-- Startup a FocusGained buffer found in current tab
 			if bufferHandle == fgAuEvent.buf then
-				local clientsAvailable = getConfigsByFt(bufType)
+				local clientsAvailable = {}
+				if getConfigsByFt then
+					clientsAvailable = getConfigsByFt(bufType) or {}
+				end
 				if #clientsAvailable > 0 then
 					lspPostponeStartup(fgAuEvent, clientsAvailable)
 				end
@@ -215,11 +222,14 @@ autocmd({ "FocusGained" }, {
 				buffer = bufferHandle,
 				callback = function(auEvent)
 					local getConfigsByFt = _G.lspTimeOutState.getConfigsByFt
-					local clientsAvailable = getConfigsByFt(vim.bo.filetype)
+					local clientsAvailable = {}
+					if getConfigsByFt then
+						clientsAvailable = getConfigsByFt(vim.bo[auEvent.buf].filetype) or {}
+					end
 					if #clientsAvailable > 0 then
 						lspPostponeStartup(auEvent, clientsAvailable)
 					end
-					-- clean up the rest of buffer-local event listeners
+					-- Clean up the rest of buffer-local event listeners
 					auclear({ group = auLSTOBL })
 				end,
 				desc = "Start LSP servers if inner window is focused",
@@ -251,8 +261,12 @@ autocmd({ "FocusLost" }, {
 		-- LuaFormatter off
 
 		if not _G.lspTimeOutState.stopTimer and clientsNum > 0 then
-			local configDefault = require("lsp-timeout.config").default
-			local config = configDefault:extend(
+			local ok, configModule = pcall(require, "lsp-timeout.config")
+			if not ok or not configModule or not configModule.default then
+				vim.notify("lsp-timeout: Could not load config default!", vim.log.levels.ERROR)
+				return
+			end
+			local config = configModule.default:extend(
 				vim.b[auEvent.buf].lspTimeoutConfig or vim.g["lsp-timeout-config"] or vim.g.lspTimeoutConfig or {}
 			)
 			if vim.tbl_contains(config.filetypes.ignore, vim.bo[auEvent.buf].filetype) then
