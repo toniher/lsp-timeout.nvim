@@ -20,11 +20,19 @@ autocmd({"VimEnter"}, {
 		--
 		--- Return true if no lsp-config commands are found
 		local lspconfigFailed = false
-		local lspconfigNoStartCmd = vim.fn.exists(":LspStart") == 0
-		local lspconfigNoStoptCmd = vim.fn.exists(":LspStop")  == 0
-		if  lspconfigNoStartCmd or lspconfigNoStoptCmd then
-			local message = "LspStart or LspStop commands are NOT found."
-			.. "Make sure lsp-config.nvim is installed"
+		-- NVIM v0.12+: lsp enable/stop commands (built-in)
+		-- NVIM <0.12: LspStart/LspStop commands (via lspconfig)
+		local hasLspStart = vim.fn.exists(":LspStart") == 1
+		local hasLspStop = vim.fn.exists(":LspStop") == 1
+		local hasLspEnable = vim.fn.exists(":lsp") == 1 and vim.fn.exists(":lsp enable") ~= 0
+		local hasLspStopCmd = vim.fn.exists(":lsp") == 1 and vim.fn.exists(":lsp stop") ~= 0
+
+		-- For NVIM 0.12+, built-in lsp commands are available
+		-- For older versions, lspconfig provides LspStart/LspStop
+		local lspCmdsAvailable = (hasLspStart and hasLspStop) or (hasLspEnable and hasLspStopCmd)
+		if not lspCmdsAvailable then
+			local message = "LSP commands (LspStart/LspStop or lsp enable/stop) are NOT found."
+				.. " Make sure lspconfig.nvim is installed or use NVIM v0.12+"
 			vim.notify(message, vim.log.levels.ERROR)
 			lspconfigFailed = true
 		end
