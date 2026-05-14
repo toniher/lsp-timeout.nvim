@@ -31,9 +31,9 @@ end
 --- @param table table|nil
 --- @return boolean
 M.Config.tableOfStrings = function(table)
-	local tableIsList  = type(table) == "table" and vim.tbl_islist(table)
+	local tableIsList  = type(table) == "table" and vim.islist(table)
 	if tableIsList then
-		local value = nil 
+		local value = nil
 		for i = 1, #table do
 			value = table[i]
 			if type(value) ~= "string" then
