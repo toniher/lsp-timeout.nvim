@@ -31,9 +31,9 @@ end
 --- @param table table|nil
 --- @return boolean
 M.Config.tableOfStrings = function(table)
-	local tableIsList  = type(table) == "table" and vim.tbl_islist(table)
+	local tableIsList  = type(table) == "table" and vim.islist(table)
 	if tableIsList then
-		local value = nil 
+		local value = nil
 		for i = 1, #table do
 			value = table[i]
 			if type(value) ~= "string" then
@@ -72,7 +72,7 @@ function M.Config.prototype:validate()
 	end
 
 	if self.filetypes ~= nil then
-		if (vim.tbl_islist(self.filetypes)
+		if (vim.islist(self.filetypes)
 		and (not vim.tbl_isempty(self.filetypes)) or not self.filetypes.ignore)
 		then
 			error("lsp-timeout.config.filetypes: { ignore = { .. } } is expected, got "
