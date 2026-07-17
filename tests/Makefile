@@ -1,6 +1,10 @@
-# This file is intended to be called by meta Make file 
+# This file is intended to be called by meta Make file
 export SHELL ?=bash
 export NVIM  ?=nvim
+
+# Without this, bare `make` picks the first target in the file (the plenary
+# bootstrap rule below) instead of running any tests.
+.DEFAULT_GOAL := all
 
 # tests: setup plenary.nvim
 #-------------------------------------
