@@ -96,6 +96,7 @@ Plugin setups two augroups:
 > **Note**
 > IF SOME PLUGIN FAILED BECAUSE OF STOPPED LSP, PLEASE, FILL AN ISSUE IN A RESPECTIVE PLUGIN REPO
 
+* Run `:checkhealth lsp-timeout` to self-diagnose the plugin itself (LSP command availability, config validity, stuck timers)
 * Run `LspInfo` to find (in)active LSPs
 * Use `map <...>` to check what keymaps are setup/lost upon restart 
 * If you hook into |LspAttach| and |LspDetach| events, make sure to store & clean up buffer-local variables or keymaps only once per every cycle
