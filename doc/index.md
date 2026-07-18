@@ -91,12 +91,21 @@ Plugin setups two augroups:
 * `LSPTimeout` - global augroup for various events 
 * `LSPTimeoutBufferLocal` - buffer-local groups, temporary 
 
+### Commands
+
+* `:LspTimeoutPause` - temporarily disable lsp-timeout; `FocusGained`/`FocusLost`
+  become no-ops until resumed. This does not cancel an already-armed
+  `startTimer`/`stopTimer` (the pending stop/restart from `stopTimeout`/
+  `startTimeout` still fires once) - it only stops new stop/start cycles from
+  being scheduled on the next focus change.
+* `:LspTimeoutResume` - re-enable lsp-timeout after `:LspTimeoutPause`.
+
 ### TROUBLESHOOTING
 
 > **Note**
 > IF SOME PLUGIN FAILED BECAUSE OF STOPPED LSP, PLEASE, FILL AN ISSUE IN A RESPECTIVE PLUGIN REPO
 
-* Run `:checkhealth lsp-timeout` to self-diagnose the plugin itself (LSP command availability, config validity, stuck timers)
+* Run `:checkhealth lsp-timeout` to self-diagnose the plugin itself (LSP command availability, config validity, stuck `startTimer`/`stopTimer`)
 * Run `LspInfo` to find (in)active LSPs
 * Use `map <...>` to check what keymaps are setup/lost upon restart 
 * If you hook into |LspAttach| and |LspDetach| events, make sure to store & clean up buffer-local variables or keymaps only once per every cycle

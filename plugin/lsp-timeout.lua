@@ -9,6 +9,14 @@ local auLSTOBL = augroup("LSPTimeoutBufferLocal", { clear = true })
 
 _G.lspTimeOutState = _G.lspTimeOutState or { b = {} }
 
+vim.api.nvim_create_user_command("LspTimeoutPause", function()
+	_G.lspTimeOutState.paused = true
+end, { desc = "Pause lsp-timeout.nvim: stop starting/stopping LSP clients on focus change" })
+
+vim.api.nvim_create_user_command("LspTimeoutResume", function()
+	_G.lspTimeOutState.paused = false
+end, { desc = "Resume lsp-timeout.nvim after :LspTimeoutPause" })
+
 autocmd({ "VimEnter" }, {
 	desc = "Check if nvim-lspconfig commands are available",
 	group = auLSTO,
@@ -90,6 +98,10 @@ autocmd({ "FocusGained" }, {
 	desc = "Start LSP servers if application window is focused",
 	group = auLSTO,
 	callback = function(fgAuEvent)
+		if _G.lspTimeOutState.paused then
+			return
+		end
+
 		local lspPostponeStartup = function(auEvent, clientsAvailable)
 			-- Clear up lsp stop timer
 			if _G.lspTimeOutState.stopTimer then
@@ -244,6 +256,10 @@ autocmd({ "FocusLost" }, {
 	desc = "Stop LSP servers if application window isn't focused",
 	group = auLSTO,
 	callback = function(auEvent)
+		if _G.lspTimeOutState.paused then
+			return
+		end
+
 		-- Clear up lsp start timer
 		if _G.lspTimeOutState.startTimer then
 			_G.lspTimeOutState.startTimer:stop()
