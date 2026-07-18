@@ -39,7 +39,11 @@ tracked in this file — see the `vX.Y.Z` git tags for that history.
   scoped `{buf=...}`/`{win=...}` opts, which isn't true on v0.7.2; now falls
   back to the older buf/win-scoped option API via `pcall` detection.
 - `vim.tbl_islist`/`vim.tbl_isarray` deprecation warnings on newer Neovim,
-  replaced with `vim.islist` (closes #17).
+  replaced with `vim.islist` (closes #17). This swap itself regressed
+  compatibility with Neovim <0.10 (`vim.islist` doesn't exist there,
+  crashing `Config:validate()` on any non-empty `filetypes.ignore`) —
+  caught once CI actually ran against v0.8.3 after the v0.7.2 exclusion
+  below; fixed with `local islist = vim.islist or vim.tbl_islist`.
 - Dead/overlapping `filetypes` validation block in `config.lua`'s
   `validate()`, and a no-op `:format()` call (no placeholder) in the
   `FocusLost` notify message.

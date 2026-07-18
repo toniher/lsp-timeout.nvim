@@ -2,6 +2,12 @@
 --- Configuration class
 --- @class M.Config
 local M = {}
+
+-- vim.islist was only added in NVIM 0.10; older versions (down to v0.7.2)
+-- only have the older, now-deprecated vim.tbl_islist. Prefer the new name
+-- when available (avoids the deprecation notice on 0.10+), otherwise fall
+-- back so this doesn't hard-crash on older versions.
+local islist = vim.islist or vim.tbl_islist
 M.Config = {prototype = {ctx = {}, constructor = M.Config}}
 M.Config._mt = {
 	__index = function(table, key)
@@ -31,7 +37,7 @@ end
 --- @param table table|nil
 --- @return boolean
 M.Config.tableOfStrings = function(table)
-	local tableIsList  = type(table) == "table" and vim.islist(table)
+	local tableIsList  = type(table) == "table" and islist(table)
 	if tableIsList then
 		local value = nil
 		for i = 1, #table do
