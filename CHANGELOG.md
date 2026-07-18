@@ -48,6 +48,12 @@ tracked in this file — see the `vX.Y.Z` git tags for that history.
   load is now handled defensively instead of erroring the autocmd.
 - CI not running the full test suite by default (missing `.DEFAULT_GOAL`
   and an explicit `all` target in `tests/Makefile`).
+- CI (and a plain local `make`/`make test`) hanging indefinitely on v0.7.2:
+  plenary.nvim's test harness calls `stdpath("log")` at require-time, which
+  v0.7.2 doesn't support, leaving Neovim blocked on an error prompt with no
+  TTY to dismiss it. Removed v0.7.2 from `tests/Makefile`'s
+  `NEOVIM_VERSIONS` (v0.7.2 compat is verified manually instead) and added
+  `timeout-minutes: 15` to the CI job as a safety net.
 
 ### Docs
 

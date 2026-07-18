@@ -33,8 +33,17 @@ $(DEP_PLENARY_PATH):
 
 # test: setup neovim versions for testing
 #-------------------------------------
-# Neovim versions to test
-NEOVIM_VERSIONS=v0.7.2 v0.8.3 v0.9.2 nightly
+# Neovim versions to test automatically via plenary.nvim's busted harness.
+#
+# v0.7.2 is deliberately excluded: plenary.nvim's test harness
+# (lua/plenary/log.lua) unconditionally calls stdpath("log") when required,
+# which v0.7.2 doesn't support ("E6100: 'log' is not a valid stdpath").
+# Neovim then blocks on an error prompt with no TTY to dismiss it, hanging
+# the run indefinitely instead of failing - this affects both CI and a
+# plain local `make`/`make test`. v0.7.2 compat is instead verified
+# manually (dofile the plugin + nvim_exec_autocmds against stubbed clients,
+# bypassing plenary entirely) - see CHANGELOG.md.
+NEOVIM_VERSIONS=v0.8.3 v0.9.2 nightly
 
 include ../make/neovim-install.mk
 
