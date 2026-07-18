@@ -286,9 +286,7 @@ autocmd({ "FocusLost" }, {
 					end
 					if not config.silent then
 						-- LuaFormatter off
-						local messageOnWindows = #tabPageWindows > 1
-								and (" in current tab windows"):format(#tabPageWindows)
-							or ""
+						local messageOnWindows = #tabPageWindows > 1 and " in current tab windows" or ""
 						vim.notify(
 							("lsp-timeout.nvim: nvim has lost focus, stop %s language servers%s"):format(
 								clientsNum,

@@ -72,15 +72,6 @@ function M.Config.prototype:validate()
 	end
 
 	if self.filetypes ~= nil then
-		if (vim.islist(self.filetypes)
-		and (not vim.tbl_isempty(self.filetypes)) or not self.filetypes.ignore)
-		then
-			error("lsp-timeout.config.filetypes: { ignore = { .. } } is expected, got "
-			.. vim.inspect(self.filetypes), 2)
-		end
-	end
-
-	if self.filetypes ~= nil then
 		if type(self.filetypes) ~= "table" then
 			error("lsp-timeout.config.filetypes: table is expected, got "
 			.. type(self.filetypes), 2)
