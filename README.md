@@ -13,6 +13,10 @@ https://github.com/hinell/lsp-timeout.nvim/assets/8136158/92e30089-192f-4c75-8be
 
 > _Nvim plugin for nvim-lspconfig: stop idle servers & restart upon focus; keep your RAM usage low_
 
+> **Note**
+> This is a fork of [hinell/lsp-timeout.nvim](https://github.com/hinell/lsp-timeout.nvim),
+> maintained by [Toni Hermoso Pulido](https://github.com/toniher).
+
 ## Overview
 
 Some LSP servers are terribly inefficient at memory management and can
@@ -29,7 +33,9 @@ automatically upon gaining or loosing window focus, keeping neovim fast.
 ## 🔒Requirements
 
 - [Neovim 0.7.2+](https://github.com/neovim/neovim/releases)
-- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) - required on
+  Neovim <0.12; on 0.12+ the built-in `vim.lsp.enable`/`vim.lsp.get_configs`
+  are used instead, so lspconfig becomes optional
 
 ## 📦 Installation
 
@@ -82,3 +88,4 @@ _NO GUARANTEES UNTIL PAID. This project is supported and provided AS IS. See als
 
 September 26, 2023</br>
 Copyright ©  - Alexander Davronov (a.k.a Hinell), et.al.</br>
+Fork maintained by Toni Hermoso Pulido, et.al.</br>

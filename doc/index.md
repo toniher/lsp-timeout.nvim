@@ -1,7 +1,8 @@
 # OVERVIEW
 
-Nvim plugin for nvim-lspconfig: stop idle servers & restart upon gaining focus;
-keeps RAM usage low
+Nvim plugin to stop idle LSP servers & restart upon gaining focus, keeping
+RAM usage low. Works with `nvim-lspconfig`, or standalone on Neovim 0.12+'s
+built-in LSP client management.
 
 **Default behavior**:
 * Tabpages and windows inside - are traversed & checked for LSPs
@@ -19,6 +20,8 @@ Requirements:
 
 * Neovim v0.7.2+
 * nvim-lspconfig: https://github.com/neovim/nvim-lspconfig
+  (required on Neovim <0.12; on 0.12+ the built-in `vim.lsp.enable`/
+  `vim.lsp.get_configs` are used instead, so lspconfig becomes optional)
 
 ```lua
 {

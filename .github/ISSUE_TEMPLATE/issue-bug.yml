@@ -27,6 +27,13 @@ body:
     validations:
       required: false
   - type: textarea
+    id: issue-checkhealth
+    attributes:
+      label: checkhealth output
+      placeholder: Run `:checkhealth lsp-timeout` and paste the output here
+    validations:
+      required: false
+  - type: textarea
     id: issue-env
     attributes:
       label: Versions

@@ -1,4 +1,4 @@
-*lsp-timeout.txt*                                 Last change: 2023 October 29
+*lsp-timeout.txt*                                    Last change: 2026 July 18
 
 ==============================================================================
 Table of Contents                              *lsp-timeout-table-of-contents*
@@ -7,6 +7,7 @@ INSTALL ................................................ |lsp-timeout-install|
 UPDATE .................................................. |lsp-timeout-update|
 CONFIGURATION .................................... |lsp-timeout-configuration|
 Augroups .............................................. |lsp-timeout-augroups|
+Commands .............................................. |lsp-timeout-commands|
 TROUBLESHOOTING ................................ |lsp-timeout-troubleshooting|
 TROUBLESHOOTING PLUGINS ................ |lsp-timeout-troubleshooting-plugins|
 
@@ -14,8 +15,9 @@ TROUBLESHOOTING PLUGINS ................ |lsp-timeout-troubleshooting-plugins|
 OVERVIEW                                                *lsp-timeout-overview*
 
 
-Nvim plugin for nvim-lspconfig: stop idle servers & restart upon gaining
-focus; keeps RAM usage low
+Nvim plugin to stop idle LSP servers & restart upon gaining focus, keeping
+RAM usage low. Works with `nvim-lspconfig`, or standalone on Neovim 0.12+'s
+built-in LSP client management.
 
 **Default behavior**:
 
@@ -39,6 +41,8 @@ Requirements:
 
 * Neovim v0.7.2+
 * nvim-lspconfig: https://github.com/neovim/nvim-lspconfig
+  (required on Neovim <0.12; on 0.12+ the built-in `vim.lsp.enable`/
+  `vim.lsp.get_configs` are used instead, so lspconfig becomes optional)
 >lua
     {
         "hinell/lsp-timeout.nvim",
@@ -115,12 +119,28 @@ Plugin setups two augroups:
 * `LSPTimeout` - global augroup for various events
 * `LSPTimeoutBufferLocal` - buffer-local groups, temporary
 
-                                                                              
+
+COMMANDS                                                *lsp-timeout-commands*
+
+* `:LspTimeoutPause` - temporarily disable lsp-timeout; |FocusGained|/
+  |FocusLost| become no-ops until resumed. This does not cancel an
+  already-armed `startTimer`/`stopTimer` (the pending stop/restart from
+  `stopTimeout`/`startTimeout` still fires once) - it only stops new
+  stop/start cycles from being scheduled on the next focus change.
+* `:LspTimeoutResume` - re-enable lsp-timeout after `:LspTimeoutPause`.
+* `:LspTimeoutStatus` - print a one-line summary: paused or active, whether
+  `stopTimer`/`startTimer` are armed, and how many stopped clients are
+  currently tracked for restart. A quicker, narrower alternative to
+  `:checkhealth lsp-timeout` for a fast glance at plugin state.
+
+
 TROUBLESHOOTING                                  *lsp-timeout-troubleshooting*
 
   **Note** IF SOME PLUGIN FAILED BECAUSE OF STOPPED LSP, PLEASE, FILL AN ISSUE
   IN A RESPECTIVE PLUGIN REPO
 
+* Run `:checkhealth lsp-timeout` to self-diagnose the plugin itself (LSP
+  command availability, config validity, stuck `startTimer`/`stopTimer`)
 * Run `LspInfo` to find (in)active LSPs
 * Use `map <...>` to check what keymaps are setup/lost upon restart
 * If you hook into |LspAttach| and |LspDetach| events, make sure to store &
