@@ -36,5 +36,12 @@ $(HOME)/.neovim/:
 $(patsubst %,$(HOME)/.neovim/%/bin/nvim,$(NEOVIM_VERSIONS)): $(HOME)/.neovim/%/bin/nvim: | $(HOME)/.neovim/
 	echo "Downloading Nvim $(*) to \$$HOME/.neovim/$(*)/"
 	mkdir -vp "$${HOME}/.neovim/$(*)"
-	_ASSET_NAME="$(*)/nvim-linux64.tar.gz"
-	curl -sL "https://github.com/neovim/neovim/releases/download/$${_ASSET_NAME}" | tar --strip-components=1 -C "$${HOME}/.neovim/$(*)/" -xzf -
+	# Neovim's release asset was renamed from nvim-linux64.tar.gz (releases
+	# <=v0.10.x) to nvim-linux-x86_64.tar.gz (v0.11+ and nightly); try the
+	# new name first and fall back to the old one so this works across the
+	# whole range without hardcoding a version cutover here.
+	_ARCHIVE="$${HOME}/.neovim/$(*)/nvim.tar.gz"
+	curl -sfL "https://github.com/neovim/neovim/releases/download/$(*)/nvim-linux-x86_64.tar.gz" -o "$${_ARCHIVE}" \
+		|| curl -sfL "https://github.com/neovim/neovim/releases/download/$(*)/nvim-linux64.tar.gz" -o "$${_ARCHIVE}"
+	tar --strip-components=1 -C "$${HOME}/.neovim/$(*)/" -xzf "$${_ARCHIVE}"
+	rm -f "$${_ARCHIVE}"

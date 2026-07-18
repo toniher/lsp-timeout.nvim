@@ -58,6 +58,14 @@ tracked in this file — see the `vX.Y.Z` git tags for that history.
   TTY to dismiss it. Removed v0.7.2 from `tests/Makefile`'s
   `NEOVIM_VERSIONS` (v0.7.2 compat is verified manually instead) and added
   `timeout-minutes: 15` to the CI job as a safety net.
+- CI failing to download `nightly` (`gzip: stdin: not in gzip format`):
+  `make/neovim-install.mk` hardcoded the release asset name as
+  `nvim-linux64.tar.gz`, but Neovim renamed it to
+  `nvim-linux-x86_64.tar.gz` starting with v0.11.0; `nightly` always
+  tracks that new naming, so the request 404'd and the error page got
+  piped straight into `tar`. Now downloads with `curl -sfL` (fails loudly
+  on HTTP errors) trying the new name first and falling back to the old
+  one, working across the whole version range.
 
 ### Docs
 
