@@ -302,10 +302,16 @@ autocmd({ "FocusLost" }, {
 		-- LuaFormatter on
 		local napi = require("lsp-timeout.nvim-api")
 		local clientsRunning = napi.Lsp.Clients:new(napi.tabs.current.lsp:clients())
-		_G.lspTimeOutState.b[auEvent.buf] = {}
-		_G.lspTimeOutState.b[auEvent.buf].stopped_clients = clientsRunning
-		local clientsNum = #clientsRunning
 		local tabPageWindows = vim.api.nvim_tabpage_list_wins(0)
+		local tabPageBuffers = vim.tbl_map(function(winHandle)
+			return vim.api.nvim_win_get_buf(winHandle)
+		end, tabPageWindows)
+		-- Record each tab buffer's own stopped clients under its own key, so
+		-- FocusGained can restart every buffer exactly, not just auEvent.buf
+		for _, bufHandle in ipairs(tabPageBuffers) do
+			_G.lspTimeOutState.b[bufHandle] = { stopped_clients = napi.Lsp:clients({ buf = bufHandle }) }
+		end
+		local clientsNum = #clientsRunning
 		-- LuaFormatter off
 
 		if not _G.lspTimeOutState.stopTimer and clientsNum > 0 then

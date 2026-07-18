@@ -7,9 +7,14 @@ M.Buffer = {}
 --- Cross-runtime option fetcher
 function M.Buffer:option(name, bufHandle)
 	if vim.api.nvim_get_option_value then
-		return vim.api.nvim_get_option_value(name, { buf = bufHandle })
-	elseif vim.api.nvim_buf_get_option then
-		-- nvim v0.7.2
+		-- nvim v0.7.2: nvim_get_option_value exists but rejects { buf = ... }
+		-- ("invalid key: buf"), so its mere existence isn't enough to use it
+		local ok, value = pcall(vim.api.nvim_get_option_value, name, { buf = bufHandle })
+		if ok then
+			return value
+		end
+	end
+	if vim.api.nvim_buf_get_option then
 		return vim.api.nvim_buf_get_option(bufHandle, name)
 	else
 		vim.notify("your nvim version is not supported", vim.log.levels.ERROR)
@@ -20,9 +25,14 @@ end
 M.Window = {}
 function M.Window:option(name, winHandle)
 	if vim.api.nvim_get_option_value then
-		return vim.api.nvim_get_option_value(name, { win = winHandle })
-	elseif vim.api.nvim_win_get_option then
-		-- nvim v0.7.2
+		-- nvim v0.7.2: nvim_get_option_value exists but rejects { win = ... }
+		-- ("invalid key: win"), so its mere existence isn't enough to use it
+		local ok, value = pcall(vim.api.nvim_get_option_value, name, { win = winHandle })
+		if ok then
+			return value
+		end
+	end
+	if vim.api.nvim_win_get_option then
 		return vim.api.nvim_win_get_option(winHandle, name)
 	else
 		vim.notify("your nvim version is not supported, please fill an issue", vim.log.levels.ERROR)
