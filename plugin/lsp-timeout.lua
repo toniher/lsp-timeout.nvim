@@ -17,6 +17,38 @@ vim.api.nvim_create_user_command("LspTimeoutResume", function()
 	_G.lspTimeOutState.paused = false
 end, { desc = "Resume lsp-timeout.nvim after :LspTimeoutPause" })
 
+vim.api.nvim_create_user_command("LspTimeoutStatus", function()
+	local state = _G.lspTimeOutState
+
+	local function timerState(timerName)
+		local timer = state[timerName]
+		if not timer then
+			return "not armed"
+		end
+		local isActiveOk, isActive = pcall(function()
+			return timer:is_active()
+		end)
+		return (isActiveOk and isActive) and "armed" or "stale"
+	end
+
+	local stoppedClientsCount = 0
+	for _, bufState in pairs(state.b) do
+		if bufState.stopped_clients then
+			stoppedClientsCount = stoppedClientsCount + #bufState.stopped_clients
+		end
+	end
+
+	vim.notify(
+		("lsp-timeout: %s | stopTimer: %s | startTimer: %s | stopped clients tracked: %d"):format(
+			state.paused and "paused" or "active",
+			timerState("stopTimer"),
+			timerState("startTimer"),
+			stoppedClientsCount
+		),
+		vim.log.levels.INFO
+	)
+end, { desc = "Show current lsp-timeout.nvim status (paused state, timers, stopped clients)" })
+
 autocmd({ "VimEnter" }, {
 	desc = "Check if nvim-lspconfig commands are available",
 	group = auLSTO,

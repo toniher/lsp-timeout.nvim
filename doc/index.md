@@ -99,6 +99,10 @@ Plugin setups two augroups:
   `startTimeout` still fires once) - it only stops new stop/start cycles from
   being scheduled on the next focus change.
 * `:LspTimeoutResume` - re-enable lsp-timeout after `:LspTimeoutPause`.
+* `:LspTimeoutStatus` - print a one-line summary: paused or active, whether
+  `stopTimer`/`startTimer` are armed, and how many stopped clients are
+  currently tracked for restart. A quicker, narrower alternative to
+  `:checkhealth lsp-timeout` for a fast glance at plugin state.
 
 ### TROUBLESHOOTING
 

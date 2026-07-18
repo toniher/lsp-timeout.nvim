@@ -78,6 +78,12 @@ local function checkTimers()
 		return
 	end
 
+	if state.paused then
+		warn("lsp-timeout is currently paused (:LspTimeoutResume to re-enable)")
+	else
+		ok("lsp-timeout is not paused")
+	end
+
 	for _, timerName in ipairs({ "stopTimer", "startTimer" }) do
 		local timer = state[timerName]
 		if not timer then
